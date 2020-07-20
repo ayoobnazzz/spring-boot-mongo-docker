@@ -1,22 +1,32 @@
-apiVersion: v1
-kind: ReplicationController
+# Deployments  Rolling Update
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  labels:
-    name: springboot
-  name: spring-controller
+  name: springboot
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 1
+       maxUnavailable: 1
+  minReadySeconds: 30   
+  selector:
+    matchLabels:
+      app: springboot
   template:
     metadata:
+      name: springboot
       labels:
-        name: springboot
+        app: springboot
     spec:
       containers:
-      - image: ayoobnaz/spring-boot-mongo
-        name: springboot
+      - name: springboot
+        image: ayoobnaz/spring-boot-mongo
         ports:
         - name: springboot
-          containerPort: 8080      
+          containerPort: 8080   
+        
 ---
 # Node Port Service
 apiVersion: v1
